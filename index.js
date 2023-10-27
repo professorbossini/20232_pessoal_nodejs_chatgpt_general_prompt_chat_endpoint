@@ -12,11 +12,14 @@ const openai = new OpenAI(OPENAI_API_KEY)
 
 //especificamos o endpoint de interesse
 //POST /pergunte-ao-chatgpt
-app.post('/pergunte-ao-chatgpt', (req, res) => {
-  //desestruturamos o corpo da requisição, pegando apenas o prompt
+app.post('/pergunte-ao-chatgpt', async (req, res) => {
   const { prompt } = req.body
-  //apenas devolvemos o prompt ao cliente, realizando um teste breve
-  res.json({seuPrompt: prompt})
+
+  const completion = await openai.chat.completions.create({
+    messages: [{ role: "user", content: prompt}],
+    model: "gpt-3.5-turbo",
+  });
+  res.json({completion: completion.choices[0].message.content})
 })
 
 //colocamos o servidor em execução na porta 4000
